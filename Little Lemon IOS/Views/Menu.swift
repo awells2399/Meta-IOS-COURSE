@@ -10,13 +10,15 @@ import SwiftUI
 struct Menu: View {
     @Environment(\.managedObjectContext) private var viewContext
     @State var searchText = ""
+    @State var loaded = false
 
     var body: some View {
         VStack {
+            Header()
             VStack { // Hero Section
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Little Lemon").font(.title).foregroundColor(.yellow)
+                        Text("Little Lemon").font(.title).foregroundColor(Color.primaryColor2)
                         Text("Chicago").font(.title2).foregroundColor(.white).padding(.bottom)
                         Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.").fixedSize(horizontal: false, vertical: true).foregroundColor(.white)
                     }
@@ -26,47 +28,21 @@ struct Menu: View {
                     Image(systemName: "magnifyingglass")
                     TextField("Search menu", text: $searchText)
                 }.padding().background(.white)
-            }.padding(.bottom, 10).background(.green)
-
-            // FILTER OPTIONS
-            VStack {
-                Text("Order for Delivery").font(.title3).frame(maxWidth: .infinity, alignment: .leading).padding()
-                HStack {
-                    Text("Starters").font(.subheadline).padding()
-                        .background(.gray)
-                        .clipShape(Capsule())
-                    Text("Mains").font(.subheadline).padding()
-                        .background(.gray)
-                        .clipShape(Capsule())
-                    Text("Desserts").font(.subheadline).padding()
-                        .background(.gray)
-                        .clipShape(Capsule())
-                    Text("Sides").font(.subheadline).padding()
-                        .background(.gray)
-                        .clipShape(Capsule())
-                }.frame(maxWidth: .infinity)
-                Spacer().frame(maxWidth: .infinity, maxHeight: 2).background(.gray).padding()
-            }.frame(maxWidth: .infinity, alignment: .leading)
+            }.padding(.bottom, 10).background(Color.primaryColor1)
 
             FetchedObjects(predicate: buildPredicate(), sortDescriptors: buildSortDescriptors()) { (dishes: [Dish]) in
                 List {
                     ForEach(dishes) { dish in
-                        HStack {
-                            VStack {
-                                Text(dish.title!)
-                                Text(dish.dishDescription!)
-                                Text("$\(dish.price!)")
-                            }
-                            AsyncImage(url: URL(string: dish.image!)) { phase in
-                                phase.image?.resizable().scaledToFit()
-                            }.frame(width: 60, height: 60)
-                        }
+                        FoodItem(dish: dish)
                     }
                 }.scrollContentBackground(.hidden)
             }
         }
         .onAppear {
-            getMenuData()
+            if !loaded {
+                getMenuData()
+                loaded = true
+            }
         }
     }
 

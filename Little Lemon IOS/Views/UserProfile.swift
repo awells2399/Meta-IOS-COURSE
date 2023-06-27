@@ -18,16 +18,16 @@ struct UserProfile: View {
             Text("Personal Information")
             Image("profile-image-placeholder")
 
-            Text(fistName ?? "")
-            Text(lastName ?? "")
-            Text(email ?? "")
+            Text("First Name: \(fistName ?? "")")
+            Text("Last Name: \(lastName ?? "")")
+            Text("Email: \(email ?? "")")
 
             Button("Logout") {
                 UserDefaults.standard.set(false, forKey: kIsLoggedIn)
                 self.presentation.wrappedValue.dismiss()
-            }
+            }.buttonStyle(ButtonStyleYellowColorWide())
             Spacer()
-        }
+        }.padding()
     }
 }
 
